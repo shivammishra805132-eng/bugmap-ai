@@ -1,0 +1,1719 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#060914">
+<title>BugMap AI | Developer Workspace</title>
+
+<style>
+:root {
+    --bg: #060914;
+    --panel: #0b1425;
+    --panel-light: #101d32;
+    --border: #213551;
+    --cyan: #00d9f5;
+    --blue: #68aaff;
+    --purple: #ad79ff;
+    --green: #45e6ad;
+    --red: #ff6b81;
+    --yellow: #ffd166;
+    --text: #e9f2ff;
+    --muted: #91a6c3;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 85px;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(0,217,245,.08), transparent 48%),
+        var(--bg);
+    color: var(--text);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.6;
+}
+
+button, input, select, textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    color: inherit;
+}
+
+::selection {
+    background: rgba(0,217,245,.3);
+    color: white;
+}
+
+/* NAVBAR */
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 13px 5%;
+    background: rgba(6,9,20,.94);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 22px;
+    font-weight: 850;
+    letter-spacing: -.6px;
+    white-space: nowrap;
+}
+
+.brand b {
+    color: var(--cyan);
+}
+
+.brand-icon {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(0,217,245,.35);
+    border-radius: 11px;
+    color: var(--cyan);
+    background: rgba(0,217,245,.07);
+}
+
+.navbar nav {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.navbar nav a {
+    color: #bdcce0;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: color .2s;
+}
+
+.navbar nav a:hover {
+    color: var(--cyan);
+}
+
+.online {
+    color: var(--green);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.online-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 12px var(--green);
+}
+
+/* MAIN BACKGROUND */
+
+main {
+    width: 92%;
+    max-width: 1450px;
+    margin: 0 auto;
+}
+
+.ambient {
+    position: fixed;
+    z-index: -1;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: .1;
+    pointer-events: none;
+}
+
+.ambient-one {
+    top: 150px;
+    left: -180px;
+    background: var(--cyan);
+}
+
+.ambient-two {
+    top: 650px;
+    right: -180px;
+    background: var(--purple);
+}
+
+.grid-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(0,217,245,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,217,245,.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+/* HERO — TEXT LEFT, ROBOT RIGHT */
+
+.hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 28px;
+    min-height: 350px;
+    padding: 38px 0 28px;
+    overflow: hidden;
+    text-align: left;
+}
+
+.hero > div:first-child {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+}
+
+.eyebrow,
+.section-kicker {
+    color: var(--cyan);
+    font-size: 10px;
+    font-weight: 850;
+    letter-spacing: 2.5px;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pulse {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 12px var(--cyan);
+}
+
+.hero h1 {
+    margin: 16px 0;
+    font-size: clamp(40px, 5.3vw, 68px);
+    line-height: 1.04;
+    letter-spacing: -2.8px;
+    font-weight: 900;
+}
+
+.gradient-text {
+    color: var(--cyan);
+    background: linear-gradient(95deg, #00d9f5, #68aaff, #ad79ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-description {
+    max-width: 490px;
+    margin: 12px 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.85;
+}
+
+.hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.hero-tags span {
+    padding: 8px 11px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: rgba(11,20,37,.9);
+    color: #d7e5f8;
+    font-size: 11px;
+}
+
+/* ROBOT IMAGE */
+
+.hero-symbol.robot-visual {
+    position: relative;
+    top: auto;
+    right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    height: 340px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    color: var(--cyan);
+    background: radial-gradient(
+        ellipse at center,
+        rgba(0,217,245,.13),
+        rgba(6,9,20,0) 72%
+    );
+    border: 1px solid rgba(0,217,245,.12);
+    border-radius: 18px;
+}
+
+.robot-visual img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    filter: drop-shadow(0 0 18px rgba(0,217,245,.2));
+    animation: robot-float 4s ease-in-out infinite;
+}
+
+@keyframes robot-float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-7px);
+    }
+}
+
+/* WORKSPACE HEADING */
+
+.workspace-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 12px 0 17px;
+}
+
+.workspace-heading h2 {
+    margin: 6px 0;
+    font-size: 22px;
+}
+
+.secure-label {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    color: #c5d5eb;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+/* EDITOR + ANALYSIS */
+
+.workspace-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: stretch;
+    gap: 18px;
+}
+
+.editor-card,
+.result-card,
+.feature-card,
+.about-card {
+    min-width: 0;
+    padding: 21px;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    background: linear-gradient(145deg, #0d1729, #09101e);
+}
+
+.editor-card {
+    border-color: rgba(0,217,245,.55);
+    box-shadow: 0 8px 35px rgba(0,217,245,.035);
+}
+
+.editor-topbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 14px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #1b2b43;
+}
+
+.window-dots {
+    display: flex;
+    gap: 5px;
+}
+
+.window-dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #ff5d76;
+}
+
+.window-dots i:nth-child(2) {
+    background: #ffc653;
+}
+
+.window-dots i:nth-child(3) {
+    background: #36e2b1;
+}
+
+.file-name {
+    color: #91a8c7;
+    font: 12px monospace;
+}
+
+.editor-status {
+    margin-left: auto;
+    color: var(--green);
+    font-size: 10px;
+}
+
+.input-label,
+.tool-label {
+    display: block;
+    margin: 12px 0 9px;
+    color: #b5c8e2;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.tool-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.tool-toolbar label {
+    color: #b5c8e2;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+select,
+textarea,
+button {
+    font: inherit;
+}
+
+.tool-select {
+    padding: 10px 12px;
+    border: 1px solid #2a405f;
+    border-radius: 9px;
+    background: #080f1c;
+    color: var(--text);
+}
+
+#language-select {
+    min-width: 140px;
+}
+
+#code {
+    display: block;
+    width: 100%;
+    min-height: 300px;
+    resize: vertical;
+    padding: 16px;
+    border: 1px solid #00aeca;
+    border-radius: 11px;
+    outline: none;
+    background: #050a14;
+    color: #e5efff;
+    font: 13px/1.8 "SFMono-Regular", Consolas, monospace;
+    tab-size: 4;
+}
+
+#code::placeholder {
+    color: #657b96;
+}
+
+#code:focus,
+select:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(0,217,245,.08);
+}
+
+.editor-footer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.keyboard-hint {
+    flex: 1;
+    color: #829bbd;
+    font-size: 11px;
+}
+
+.btn-primary,
+.btn-secondary,
+.tool-button,
+.copy-code-btn {
+    padding: 11px 15px;
+    border-radius: 9px;
+    font-weight: 800;
+    transition: transform .2s, filter .2s;
+}
+
+.btn-primary,
+.tool-button {
+    border: 0;
+    background: linear-gradient(110deg, #00d9f5, #52baff);
+    color: #04101b;
+}
+
+.btn-secondary,
+.copy-code-btn {
+    border: 1px solid var(--border);
+    background: #0a1424;
+    color: #c7d9ef;
+}
+
+.btn-primary:hover,
+.tool-button:hover,
+.btn-secondary:hover,
+.copy-code-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+}
+
+button:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+/* AI ANALYSIS PANEL */
+
+.result-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 390px;
+}
+
+.result-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #1b2b43;
+}
+
+.result-title {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.result-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #103044;
+    color: var(--cyan);
+    font-size: 22px;
+}
+
+.result-title h3 {
+    margin: 5px 0 0;
+    font-size: 17px;
+}
+
+.result-badge {
+    padding: 7px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: #9ab0ce;
+    font-size: 9px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.result-content {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    min-width: 0;
+    color: #c7d8ed;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.result-placeholder {
+    padding: 18px 5px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* COLOURFUL BUG / CAUSE / FIX / EXPLANATION */
+
+.analysis-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--card-border, var(--border));
+    border-left: 3px solid var(--accent, var(--cyan));
+    border-radius: 11px;
+    background: var(--card-bg, #0a1424);
+    animation: appear .3s ease both;
+}
+
+.analysis-card.bug {
+    --accent: #ff6482;
+    --card-bg: #201321;
+    --card-border: #593044;
+}
+
+.analysis-card.cause {
+    --accent: #ffd16a;
+    --card-bg: #211c13;
+    --card-border: #55452a;
+}
+
+.analysis-card.fixed {
+    --accent: #44e7b4;
+    --card-bg: #0d211f;
+    --card-border: #205448;
+}
+
+.analysis-card.explanation {
+    --accent: #70b7ff;
+    --card-bg: #101d34;
+    --card-border: #294c79;
+}
+
+.analysis-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: rgba(255,255,255,.04);
+    color: var(--accent, var(--cyan));
+    font-weight: 900;
+}
+
+.analysis-body {
+    min-width: 0;
+    flex: 1;
+}
+
+.analysis-body h4 {
+    margin: 2px 0 7px;
+    color: var(--accent, var(--cyan));
+    font-size: 13px;
+}
+
+.analysis-body p {
+    margin: 0;
+    color: #d0dced;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: 12px;
+}
+
+.fixed-code {
+    max-width: 100%;
+    padding: 12px;
+    overflow-x: auto;
+    border: 1px solid #203c39;
+    border-radius: 8px;
+    background: #050b14;
+    color: #c8f7e7;
+    font: 12px/1.7 monospace;
+    white-space: pre;
+}
+
+.fixed-code-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* FEATURES */
+
+.features {
+    margin: 48px 0;
+}
+
+.tools-heading {
+    margin-bottom: 20px;
+}
+
+.tools-heading h2 {
+    margin: 8px 0;
+    font-size: 28px;
+}
+
+.tools-heading p,
+.feature-card p,
+.about-card p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 16px;
+}
+
+.feature-card {
+    overflow: hidden;
+    transition: border-color .2s, transform .2s;
+}
+
+.feature-card:hover,
+.feature-card.tool-open {
+    border-color: rgba(0,217,245,.55);
+}
+
+.feature-icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #103044;
+    color: var(--cyan);
+    font-weight: 900;
+    font-size: 19px;
+}
+
+.feature-icon.purple {
+    background: #261a40;
+    color: #c49aff;
+}
+
+.feature-icon.green {
+    background: #112b2b;
+    color: #57e9bd;
+}
+
+.feature-card h3 {
+    margin: 14px 0 7px;
+    font-size: 15px;
+}
+
+.tool-button {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.syntax-output {
+    min-width: 0;
+    max-height: 280px;
+    padding: 15px;
+    overflow: auto;
+    border: 1px solid #253c58;
+    border-radius: 10px;
+    background: #050b15;
+}
+
+.syntax-output h4 {
+    margin: 0 0 15px;
+    color: #e7e8f0;
+    font-size: 18px;
+}
+
+.syntax-output pre {
+    margin: 0 0 18px;
+    overflow-x: auto;
+    color: #e8e9f2;
+    font: 12px/1.8 "SFMono-Regular", Consolas, monospace;
+    white-space: pre;
+}
+
+.syntax-output .comment {
+    color: #9299a1;
+    font-style: italic;
+}
+
+.syntax-output .kw {
+    color: #c792ea;
+}
+
+.syntax-output .str {
+    color: #80c995;
+}
+
+.tool-note {
+    color: #91a7c4;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.tools-grid .tool-card:not(.tool-open) > :not(.feature-icon):not(h3) {
+    display: none;
+}
+
+.tools-grid .tool-card:not(.tool-open) {
+    min-height: 145px;
+    cursor: pointer;
+}
+
+.tools-grid .tool-card.tool-open {
+    cursor: default;
+}
+
+.tools-grid .tool-card .tool-select {
+    width: 100%;
+    min-width: 0;
+}
+
+/* CREATOR SECTION */
+
+.about-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 35px 0 45px;
+    border-color: #44306a;
+    background: linear-gradient(110deg, #141127, #0b1425);
+}
+
+.about-symbol {
+    display: grid;
+    place-items: center;
+    flex: 0 0 55px;
+    width: 55px;
+    height: 55px;
+    border: 1px solid #69469a;
+    border-radius: 14px;
+    background: #26183d;
+    color: #d4aaff;
+    font-size: 23px;
+    font-weight: 900;
+}
+
+.about-card h2 {
+    margin: 7px 0;
+    font-size: 21px;
+}
+
+.about-card h2 span {
+    color: var(--cyan);
+}
+
+.about-card p {
+    margin-bottom: 0;
+}
+
+.about-label {
+    margin-left: auto;
+    padding-left: 20px;
+    border-left: 1px solid var(--border);
+    color: #90a5c2;
+    font-size: 10px;
+    line-height: 2;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.about-label strong {
+    color: var(--cyan);
+}
+
+/* FOOTER */
+
+footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 18px 5%;
+    border-top: 1px solid var(--border);
+}
+
+footer p {
+    color: #94a8c4;
+    font-size: 12px;
+}
+
+footer p strong {
+    color: var(--cyan);
+}
+
+.copyright {
+    color: #6f85a6;
+    font-size: 11px;
+}
+
+/* TABLET */
+
+@media (max-width: 900px) {
+    main {
+        width: 94%;
+    }
+
+    .hero {
+        gap: 18px;
+    }
+
+    .hero-symbol.robot-visual {
+        height: 280px;
+    }
+
+    .workspace-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    #code {
+        min-height: 230px;
+    }
+
+    .tools-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+    .navbar {
+        padding: 12px 4%;
+        flex-wrap: wrap;
+    }
+
+    .navbar nav {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .brand {
+        font-size: 19px;
+    }
+
+    main {
+        width: 92%;
+    }
+
+    .hero {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+        padding: 30px 0 25px;
+        text-align: center;
+    }
+
+    .hero > div:first-child {
+        width: 100%;
+    }
+
+    .hero h1 {
+        font-size: clamp(39px, 11vw, 54px);
+        letter-spacing: -1.5px;
+    }
+
+    .hero-description {
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 13px;
+    }
+
+    .hero-tags {
+        justify-content: center;
+    }
+
+    .hero-symbol.robot-visual {
+        display: flex;
+        width: 100%;
+        max-width: 100%;
+        height: 225px;
+        margin-top: 0;
+    }
+
+    .workspace-heading {
+        align-items: flex-start;
+    }
+
+    .workspace-heading h2,
+    .tools-heading h2 {
+        font-size: 21px;
+    }
+
+    .secure-label {
+        padding: 7px;
+        font-size: 9px;
+    }
+
+    .editor-card,
+    .result-card,
+    .feature-card {
+        padding: 15px;
+    }
+
+    #code {
+        min-height: 200px;
+        padding: 12px;
+        font-size: 12px;
+    }
+
+    .editor-footer {
+        align-items: stretch;
+    }
+
+    .keyboard-hint {
+        flex-basis: 100%;
+        margin-bottom: 4px;
+    }
+
+    .editor-footer button {
+        flex: 1;
+    }
+
+    .result-heading {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .result-badge {
+        margin-left: 53px;
+    }
+
+    .tools-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .about-card {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        padding: 16px;
+    }
+
+    .about-label {
+        margin-left: 0;
+    }
+
+    footer {
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+/* ACCESSIBILITY */
+
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+/* Merge robot image into the hero background */
+.hero-symbol.robot-visual {
+    width: 100%;
+    max-width: 100%;
+    height: 340px;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.hero-symbol.robot-visual img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    filter: drop-shadow(0 0 18px rgba(0, 217, 245, 0.15));
+
+    /* Image ke edges ko background mein blend karega */
+    -webkit-mask-image: radial-gradient(
+        ellipse at center,
+        black 48%,
+        rgba(0, 0, 0, 0.85) 65%,
+        transparent 100%
+    );
+    mask-image: radial-gradient(
+        ellipse at center,
+        black 48%,
+        rgba(0, 0, 0, 0.85) 65%,
+        transparent 100%
+    );
+}
+
+@media (max-width: 600px) {
+    .hero-symbol.robot-visual {
+        height: 240px;
+    }
+}
+
+/* Fill the hero area with the robot image */
+.hero {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    min-height: 430px;
+}
+
+.hero > div:first-child {
+    min-width: 0;
+}
+
+.hero-symbol.robot-visual {
+    width: 100% !important;
+    max-width: none !important;
+    height: 420px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+}
+
+.hero-symbol.robot-visual img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center;
+    -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 16%,
+        black 90%,
+        transparent 100%
+    );
+    mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 16%,
+        black 90%,
+        transparent 100%
+    );
+}
+
+@media (max-width: 600px) {
+    .hero {
+        grid-template-columns: 1fr !important;
+        min-height: auto;
+        gap: 12px !important;
+    }
+
+    .hero-symbol.robot-visual {
+        height: 280px !important;
+    }
+}
+
+</style>
+</head>
+
+<body>
+<header class="navbar">
+    <a href="#home" class="brand">⌘ BUGMAP <b>AI</b></a>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#analyzer">Analyzer</a>
+        <a href="#features">Tools</a>
+        <a href="#about">About</a>
+    </nav>
+    <div class="online">● SYSTEM ONLINE</div>
+</header>
+
+<main id="home">
+    <section class="hero">
+        <div>
+            <div class="eyebrow">✳ YOUR AI DEBUGGING PARTNER</div>
+            <h1>Find Bugs.<br><span class="gradient-text">Build Better.</span></h1>
+            <p class="hero-description">
+                Debug smarter. Learn faster. Build with confidence.<br>
+                Your coding companion, powered by AI.
+            </p>
+            <div class="hero-tags">
+                <span>✳ AI Powered</span>
+                <span>&lt;/&gt; Multi-language</span>
+                <span>⌘ Beginner Friendly</span>
+            </div>
+        </div>
+        <div class="hero-symbol robot-visual">
+    <img
+        src="{{ url_for('static', filename='images/bugmap-robot.png') }}"
+        alt="BugMap AI Robot"
+    >
+    
+</div>
+
+    </section>
+
+    <section id="analyzer">
+        <div class="workspace-heading">
+            <div>
+                <span class="section-kicker">DEVELOPER WORKSPACE</span>
+                <h2>Let's fix something.</h2>
+            </div>
+            <span class="secure-label">✦ AI ANALYSIS</span>
+        </div>
+
+        <div class="workspace-grid">
+            <section class="editor-card">
+                <div class="editor-topbar">
+                    <div class="window-dots"><i></i><i></i><i></i></div>
+                    <span class="file-name">bugmap_input.code</span>
+                    <span class="editor-status">● READY</span>
+                </div>
+
+                <div class="tool-toolbar">
+                    <label for="language-select">Programming language</label>
+                    <select id="language-select" class="tool-select">
+                        <option>Python</option>
+                        <option>Java</option>
+                        <option>C++</option>
+                        <option>JavaScript</option>
+                        <option>C</option>
+                        <option>C#</option>
+                        <option>Go</option>
+                        <option>PHP</option>
+                        <option>SQL</option>
+                        <option>HTML/CSS</option>
+                    </select>
+                </div>
+
+                <label for="code" class="input-label">PASTE YOUR CODE OR ERROR</label>
+                <textarea id="code" spellcheck="false" placeholder="// Paste your code here..."></textarea>
+
+                <div class="editor-footer">
+                    <span class="keyboard-hint">TIP: Press Cmd/Ctrl + Enter to analyze</span>
+                    <button id="clear" class="btn-secondary" type="button">↺ Clear</button>
+                    <button id="analyze" class="btn-primary" type="button">✦ <span id="button-text">Analyze Code</span> ↗</button>
+                </div>
+            </section>
+
+            <section class="result-card" aria-live="polite">
+                <div class="result-heading">
+                    <div class="result-title">
+                        <span class="result-icon">✳</span>
+                        <div>
+                            <span class="section-kicker">BUGMAP INTELLIGENCE</span>
+                            <h3>AI Analysis</h3>
+                        </div>
+                    </div>
+                    <span id="result-status" class="result-badge">AWAITING INPUT</span>
+                </div>
+                <div id="result" class="result-content">
+                    <p class="result-placeholder">Your analysis will appear here. Paste code on the left and click Analyze Code.</p>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="tools-heading">
+            <span class="section-kicker">DEVELOPER TOOLKIT</span>
+            <h2>Useful tools. Less friction.</h2>
+            <p>Open a tool below to explore syntax or understand your code.</p>
+        </div>
+
+        <div class="tools-grid">
+            <article class="feature-card tool-card" id="syntax-tool" tabindex="0" role="button">
+                <span class="feature-icon">{ }</span>
+                <h3>Syntax Library</h3>
+                <p>Explore common code examples in different languages.</p>
+                <label class="tool-label" for="syntax-language">Choose language</label>
+                <select id="syntax-language" class="tool-select">
+                    <option>Java</option><option>Python</option><option>C++</option>
+                    <option>JavaScript</option><option>C</option><option>SQL</option>
+                    <option>HTML/CSS</option>
+                </select>
+                <div class="syntax-output" id="syntax-output"></div>
+                <button class="tool-button" id="copy-syntax" type="button">Copy Syntax</button>
+            </article>
+
+            <article class="feature-card tool-card" id="explainer-tool" tabindex="0" role="button">
+                <span class="feature-icon purple">✳</span>
+                <h3>AI Code Explainer</h3>
+                <p>Get a beginner-friendly explanation of the code in the main editor.</p>
+                <label class="tool-label" for="explain-language">Explanation language</label>
+                <select id="explain-language" class="tool-select">
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Hinglish">Hinglish</option>
+                </select>
+                <button class="tool-button" id="explain-code" type="button">Explain Editor Code ↗</button>
+                <p class="tool-note">Uses the code currently in the main editor.</p>
+            </article>
+
+            <article class="feature-card tool-card" id="formatter-tool" tabindex="0" role="button">
+                <span class="feature-icon green">↳</span>
+                <h3>Code Cleanup</h3>
+                <p>Trim extra spaces and clean up blank lines in your editor.</p>
+                <button class="tool-button" id="format-code" type="button">Clean Editor Code</button>
+                <p class="tool-note" id="format-status">This performs basic cleanup, not a full language formatter.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="about-card" id="about">
+        <div class="about-symbol">S.</div>
+        <div>
+            <span class="section-kicker">THE PERSON BEHIND THE PROJECT</span>
+            <h2>Built by Shivam<span>.</span></h2>
+            <p>A Computer Science student building BugMap AI to make coding and debugging easier.</p>
+        </div>
+        <div class="about-label">CREATOR<br><strong>BUGMAP AI</strong></div>
+    </section>
+</main>
+
+<footer>
+    <a href="#home" class="brand">⌘ BUGMAP <b>AI</b></a>
+    <p>Built with curiosity by <strong>Shivam</strong> ♥</p>
+    <span class="copyright">© 2026 BugMap AI</span>
+</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const codeInput = $("code");
+const result = $("result");
+const resultStatus = $("result-status");
+const analyzeButton = $("analyze");
+const buttonText = $("button-text");
+const languageSelect = $("language-select");
+
+const syntaxExamples = {
+    "Java": [
+`// Every Java program must have at least one class
+public class Main {
+    // The entry point where execution begins
+    public static void main(String[] args) {
+        // Prints text to the screen
+        System.out.println("Hello, World!");
+    }
+}`,
+`// Variables and output
+int age = 20;
+String name = "Shivam";
+System.out.println(name);`,
+`// Condition and loop
+if (age >= 18) {
+    System.out.println("Adult");
+}
+for (int i = 0; i < 3; i++) {
+    System.out.println(i);
+}`,
+`// A simple method
+static int add(int a, int b) {
+    return a + b;
+}`
+    ],
+    "Python": [
+`# Variables and output
+name = "Shivam"
+age = 20
+print(name, age)`,
+`# Condition and loop
+if age >= 18:
+    print("Adult")
+
+for i in range(3):
+    print(i)`,
+`# Function
+def add(a, b):
+    return a + b
+
+print(add(2, 3))`
+    ],
+    "C++": [
+`// A simple C++ program
+#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello, World!" << endl;
+    return 0;
+}`,
+`// Variables
+int age = 20;
+string name = "Shivam";
+cout << age;`,
+`// Loop
+for (int i = 0; i < 3; i++) {
+    cout << i << endl;
+}`
+    ],
+    "JavaScript": [
+`// Variables and output
+const name = "Shivam";
+let age = 20;
+console.log(name, age);`,
+`// Condition and loop
+if (age >= 18) {
+    console.log("Adult");
+}
+for (let i = 0; i < 3; i++) {
+    console.log(i);
+}`,
+`// Function
+function add(a, b) {
+    return a + b;
+}`
+    ],
+    "C": [
+`// A simple C program
+#include <stdio.h>
+
+int main(void) {
+    printf("Hello, World!\\n");
+    return 0;
+}`,
+`// Variables
+int age = 20;
+printf("%d", age);`,
+`// Loop
+for (int i = 0; i < 3; i++) {
+    printf("%d\\n", i);
+}`
+    ],
+    "SQL": [
+`-- Select rows
+SELECT name, age
+FROM students
+WHERE age >= 18;`,
+`-- Sort results
+SELECT *
+FROM students
+ORDER BY name ASC;`,
+`-- Count grouped rows
+SELECT department, COUNT(*)
+FROM employees
+GROUP BY department;`
+    ],
+    "HTML/CSS": [
+`<!-- HTML structure -->
+<main>
+  <h1>Hello, world!</h1>
+  <p>Welcome.</p>
+</main>`,
+`/* CSS styling */
+.card {
+  padding: 16px;
+  border-radius: 12px;
+}`,
+`<!-- Class selector -->
+<div class="card">Content</div>`
+    ]
+};
+
+function escapeHTML(text) {
+    return text.replace(/[&<>"']/g, ch => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;",
+        '"': "&quot;", "'": "&#39;"
+    })[ch]);
+}
+
+function renderSyntax() {
+    const lang = $("syntax-language").value;
+    const examples = syntaxExamples[lang] || syntaxExamples.Java;
+    const output = $("syntax-output");
+    output.replaceChildren();
+
+    const title = document.createElement("h4");
+    title.textContent = lang.toLowerCase();
+    output.appendChild(title);
+
+    examples.forEach(example => {
+        const pre = document.createElement("pre");
+        pre.textContent = example;
+        output.appendChild(pre);
+    });
+}
+$("syntax-language").addEventListener("change", renderSyntax);
+renderSyntax();
+
+$("copy-syntax").addEventListener("click", async () => {
+    const lang = $("syntax-language").value;
+    const text = (syntaxExamples[lang] || []).join("\n\n");
+    try {
+        await navigator.clipboard.writeText(text);
+        $("copy-syntax").textContent = "Copied!";
+    } catch {
+        $("copy-syntax").textContent = "Copy unavailable";
+    }
+});
+
+function renderAnalysis(text) {
+    result.replaceChildren();
+
+    const sections = [
+        {key:"bug", title:"Bug", icon:"!", patterns:[/^Bug\s*:/im]},
+        {key:"cause", title:"Cause", icon:"⌕", patterns:[/^Cause\s*:/im]},
+        {key:"fixed", title:"Fixed Code", icon:"✓", patterns:[/^(?:Fixed Code|Corrected Code|Fix)\s*:/im]},
+        {key:"explanation", title:"Explanation", icon:"ⓘ", patterns:[/^Explanation\s*:/im]}
+    ];
+
+    const matches = [];
+    for (const section of sections) {
+        for (const pattern of section.patterns) {
+            const match = pattern.exec(text);
+            if (match) {
+                matches.push({
+                    section,
+                    start: match.index,
+                    contentStart: match.index + match[0].length
+                });
+                break;
+            }
+        }
+    }
+    matches.sort((a,b) => a.start - b.start);
+
+    if (!matches.length) {
+        const p = document.createElement("p");
+        p.textContent = text;
+        result.appendChild(p);
+        return;
+    }
+
+    matches.forEach((item, index) => {
+        let content = text.slice(
+            item.contentStart,
+            index + 1 < matches.length ? matches[index + 1].start : text.length
+        ).trim();
+
+        content = content.replace(/^\s*[-*]\s*/, "").trim();
+
+        const card = document.createElement("article");
+        card.className = "analysis-card " + item.section.key;
+
+        const icon = document.createElement("div");
+        icon.className = "analysis-icon";
+        icon.textContent = item.section.icon;
+
+        const body = document.createElement("div");
+        body.className = "analysis-body";
+
+        const heading = document.createElement("h4");
+        heading.textContent = item.section.title;
+        body.appendChild(heading);
+
+        if (item.section.key === "fixed") {
+            content = content.replace(/^```[\w+#.-]*\s*/, "").replace(/\s*```$/, "").trim();
+
+            const header = document.createElement("div");
+            header.className = "fixed-code-header";
+            const copy = document.createElement("button");
+            copy.className = "copy-code-btn";
+            copy.type = "button";
+            copy.textContent = "Copy Code";
+            copy.addEventListener("click", async () => {
+                try {
+                    await navigator.clipboard.writeText(content);
+                    copy.textContent = "Copied!";
+                } catch {
+                    copy.textContent = "Copy unavailable";
+                }
+            });
+            header.appendChild(copy);
+            body.appendChild(header);
+
+            const pre = document.createElement("pre");
+            pre.className = "fixed-code";
+            pre.textContent = content;
+            body.appendChild(pre);
+        } else {
+            const p = document.createElement("p");
+            p.textContent = content.replace(/```/g, "").replace(/`/g, "").trim();
+            body.appendChild(p);
+        }
+
+        card.append(icon, body);
+        result.appendChild(card);
+    });
+}
+
+async function analyzeCode(options = {}) {
+    const code = (options.codeOverride ?? codeInput.value).trim();
+
+    if (!code) {
+        result.textContent = "Paste your code or error into the main editor first.";
+        resultStatus.textContent = "INPUT REQUIRED";
+        codeInput.focus();
+        return;
+    }
+
+    analyzeButton.disabled = true;
+    buttonText.textContent = options.buttonLabel || "Analyzing...";
+    resultStatus.textContent = "AI IS WORKING";
+    result.textContent = "Scanning code...\nFinding possible issues...\nPreparing suggestions...";
+
+    try {
+        const response = await fetch("/analyze", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({
+                code,
+                language: languageSelect.value,
+                mode: options.mode || "debug"
+            })
+        });
+
+        const data = await response.json();
+        renderAnalysis(data.result || "No response received.");
+        resultStatus.textContent = response.ok ? "ANALYSIS COMPLETE" : "REQUEST ERROR";
+    } catch {
+        result.textContent = "Could not connect to BugMap AI. Check that Flask is running.";
+        resultStatus.textContent = "CONNECTION ERROR";
+    } finally {
+        analyzeButton.disabled = false;
+        buttonText.textContent = "Analyze Code";
+    }
+}
+
+analyzeButton.addEventListener("click", () => analyzeCode());
+
+codeInput.addEventListener("keydown", event => {
+    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+        analyzeCode();
+    }
+});
+
+$("clear").addEventListener("click", () => {
+    codeInput.value = "";
+    result.innerHTML = '<p class="result-placeholder">Your analysis will appear here. Paste code on the left and click Analyze Code.</p>';
+    resultStatus.textContent = "AWAITING INPUT";
+    codeInput.focus();
+});
+
+$("explain-code").addEventListener("click", () => {
+    const code = codeInput.value.trim();
+    if (!code) {
+        result.textContent = "Paste code in the main editor first.";
+        resultStatus.textContent = "INPUT REQUIRED";
+        codeInput.focus();
+        return;
+    }
+
+    const language = $("explain-language").value;
+    const request = `Explain this ${languageSelect.value} code in beginner-friendly ${language}.
+Use these sections on separate lines:
+Bug:
+Cause:
+Fix:
+Explanation:
+Explain what the code does and include output if useful.
+
+Code:
+${code}`;
+
+    analyzeCode({codeOverride:request, mode:"explain", buttonLabel:"Explaining..."});
+});
+
+/* Basic cleanup: preserves Python indentation */
+$("format-code").addEventListener("click", () => {
+    const source = codeInput.value;
+    if (!source.trim()) {
+        $("format-status").textContent = "Paste code into the main editor first.";
+        codeInput.focus();
+        return;
+    }
+
+    const language = languageSelect.value;
+    let cleaned;
+
+    if (language === "Python") {
+        cleaned = source.split("\n").map(line => line.trimEnd()).join("\n").trim() + "\n";
+    } else {
+        cleaned = source.split("\n").map(line => line.trimEnd()).join("\n").trim() + "\n";
+    }
+
+    codeInput.value = cleaned;
+    $("format-status").textContent = "Whitespace cleanup applied. Review the code.";
+    codeInput.focus();
+});
+
+/* Expand one tool card at a time */
+document.querySelectorAll(".tools-grid .tool-card").forEach(card => {
+    card.addEventListener("click", event => {
+        if (event.target.closest("button,select,label,.syntax-output")) return;
+
+        const wasOpen = card.classList.contains("tool-open");
+        document.querySelectorAll(".tools-grid .tool-card")
+            .forEach(item => item.classList.remove("tool-open"));
+
+        if (!wasOpen) card.classList.add("tool-open");
+    });
+
+    card.addEventListener("keydown", event => {
+        if (event.target !== card) return;
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            card.click();
+        }
+    });
+});
+</script>
+</body>
+</html>
