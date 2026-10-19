@@ -1504,95 +1504,250 @@ $("copy-syntax").addEventListener("click", async () => {
     }
 });
 
+
 function renderAnalysis(text) {
-    result.replaceChildren();
+    result.innerHTML = "";
 
-    const sections = [
-        {key:"bug", title:"Bug", icon:"!", patterns:[/^Bug\s*:/im]},
-        {key:"cause", title:"Cause", icon:"⌕", patterns:[/^Cause\s*:/im]},
-        {key:"fixed", title:"Fixed Code", icon:"✓", patterns:[/^(?:Fixed Code|Corrected Code|Fix)\s*:/im]},
-        {key:"explanation", title:"Explanation", icon:"ⓘ", patterns:[/^Explanation\s*:/im]}
-    ];
+    const source = String(text || "").trim();
 
-    const matches = [];
-    for (const section of sections) {
-        for (const pattern of section.patterns) {
-            const match = pattern.exec(text);
-            if (match) {
-                matches.push({
-                    section,
-                    start: match.index,
-                    contentStart: match.index + match[0].length
-                });
-                break;
-            }
-        }
-    }
-    matches.sort((a,b) => a.start - b.start);
-
-    if (!matches.length) {
-        const p = document.createElement("p");
-        p.textContent = text;
-        result.appendChild(p);
+    if (!source) {
+        result.textContent = "No analysis received. Please try again.";
         return;
     }
 
-    matches.forEach((item, index) => {
-        let content = text.slice(
-            item.contentStart,
-            index + 1 < matches.length ? matches[index + 1].start : text.length
-        ).trim();
+    // Read the AI response using its section headings.
+    function getSection(names) {
+        const lines = source.split("\n");
+        const wanted = names.map(name => name.toLowerCase());
 
-        content = content.replace(/^\s*[-*]\s*/, "").trim();
+        let start = -1;
+        let content = [];
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            const match = line.match(/^(?:#{1,4}\s*)?(?:\*\*)?([^:*]+?)(?:\*\*)?:\s*$/);
+
+            if (!match) continue;
+
+            const heading = match[1].trim().toLowerCase();
+
+            if (wanted.includes(heading)) {
+                start = i + 1;
+                content = [];
+                break;
+            }
+        }
+
+        if (start === -1) return "";
+
+        const headingPattern =
+            /^(?:#{1,4}\s*)?(?:\*\*)?(Bug Detection|Bugs|Corrected Lines|Fixed Code|Expected Output|Explanation|Code Overview|Cause)(?:\*\*)?:\s*$/i;
+
+        for (let i = start; i < lines.length; i++) {
+            if (headingPattern.test(lines[i].trim())) break;
+            content.push(lines[i]);
+        }
+
+        return content.join("\n").trim();
+    }
+
+    function cleanCode(value) {
+        return value
+            .replace(/^```[\w+#.-]*\s*\n?/, "")
+            .replace(/\n?```\s*$/, "")
+            .trim();
+    }
+
+    function addCard(title, content, className, isCode = false) {
+        if (!content) return;
 
         const card = document.createElement("article");
-        card.className = "analysis-card " + item.section.key;
-
-        const icon = document.createElement("div");
-        icon.className = "analysis-icon";
-        icon.textContent = item.section.icon;
+        card.className = "analysis-card " + className;
 
         const body = document.createElement("div");
         body.className = "analysis-body";
 
         const heading = document.createElement("h4");
-        heading.textContent = item.section.title;
+        heading.textContent = title;
         body.appendChild(heading);
 
-        if (item.section.key === "fixed") {
-            content = content.replace(/^```[\w+#.-]*\s*/, "").replace(/\s*```$/, "").trim();
 
+        
+if (className === "corrected") {
+    const lines = content.split("\n");
+    let currentType = "";
+
+    lines.forEach(line => {
+        const trimmed = line.trim();
+
+        if (/^Incorrect Code:/i.test(trimmed)) {
+            currentType = "incorrect";
+            const label = document.createElement("p");
+            label.className = "code-label incorrect-label";
+            label.textContent = "❌ Incorrect Code:";
+            body.appendChild(label);
+            return;
+        }
+
+        if (/^Correct Code:/i.test(trimmed)) {
+            currentType = "correct";
+            const label = document.createElement("p");
+            label.className = "code-label correct-label";
+            label.textContent = "✅ Correct Code:";
+            body.appendChild(label);
+            return;
+        }
+
+        if (!trimmed || /^Bug \d+/i.test(trimmed)) return;
+
+        const codeLine = document.createElement("pre");
+        codeLine.className = "comparison-code " + currentType;
+
+        const code = document.createElement("code");
+        
+        code.textContent = trimmed
+            .replace(/^```[a-zA-Z0-9+#.-]*\s*/, "")
+            .replace(/```/g, "")
+            .trim();
+
+        if (/^(python|py|javascript|java|c\+\+|cpp|html|css|json)$/i.test(code.textContent)) {
+            return;
+        }
+
+        const lineMatch = code.textContent.match(/^(?:Line\s*)?(\d+)\s*:\s*(.*)$/i);
+
+        if (lineMatch) {
+            code.textContent = `Line ${lineMatch[1]}: ${lineMatch[2]}`;
+        }
+
+        codeLine.appendChild(code);
+        body.appendChild(codeLine);
+        });
+
+        card.appendChild(body);
+        result.appendChild(card);
+        return;
+    }
+
+        if (isCode) {
+            const code = cleanCode(content);
             const header = document.createElement("div");
             header.className = "fixed-code-header";
+
             const copy = document.createElement("button");
             copy.className = "copy-code-btn";
             copy.type = "button";
             copy.textContent = "Copy Code";
+
             copy.addEventListener("click", async () => {
                 try {
-                    await navigator.clipboard.writeText(content);
+                    await navigator.clipboard.writeText(code);
                     copy.textContent = "Copied!";
                 } catch {
-                    copy.textContent = "Copy unavailable";
+                    const area = document.createElement("textarea");
+                    area.value = code;
+                    document.body.appendChild(area);
+                    area.select();
+
+                    const copied = document.execCommand("copy");
+                    area.remove();
+                    copy.textContent = copied ? "Copied!" : "Copy failed";
                 }
             });
+
             header.appendChild(copy);
             body.appendChild(header);
 
             const pre = document.createElement("pre");
             pre.className = "fixed-code";
-            pre.textContent = content;
+
+            const codeElement = document.createElement("code");
+            codeElement.textContent = code;
+            pre.appendChild(codeElement);
             body.appendChild(pre);
         } else {
-            const p = document.createElement("p");
-            p.textContent = content.replace(/```/g, "").replace(/`/g, "").trim();
-            body.appendChild(p);
+            const paragraph = document.createElement("p");
+            paragraph.textContent = content
+                .replace(/```[\w+#.-]*\n?/g, "")
+                .replace(/```/g, "")
+                .replace(/\*\*/g, "")
+                .trim();
+
+            body.appendChild(paragraph);
         }
 
-        card.append(icon, body);
+        card.appendChild(body);
         result.appendChild(card);
-    });
+    }
+
+    // Main debugging sections
+    const bugText = getSection(["Bug Detection", "Bugs", "Bug"]);
+const causeText = getSection(["Cause"]);
+
+const bugOnly = bugText
+    .replace(/(?:^|\n)\s*Cause:\s*[\s\S]*$/i, "")
+    .trim();
+
+const causeFromBug = (
+    bugText.match(/(?:^|\n)\s*Cause:\s*([\s\S]*)$/i) || []
+)[1] || "";
+
+addCard("Bug Detection", bugOnly, "bug");
+
+addCard(
+    "Cause",
+    causeText || causeFromBug,
+    "cause"
+);
+
+    addCard(
+        "Corrected Lines",
+        getSection(["Corrected Lines"]),
+        "corrected"
+    );
+
+    addCard(
+        "Fixed Code",
+        getSection(["Fixed Code"]),
+        "fixed",
+        true
+    );
+
+    addCard(
+        "Expected Output",
+        getSection(["Expected Output"]),
+        "output",
+        true
+    );
+
+    addCard(
+        "Code Overview",
+        getSection(["Code Overview"]),
+        "explanation"
+    );
+
+    addCard(
+        "Explanation",
+        getSection(["Explanation"]),
+        "explanation"
+    );
+
+    // Fallback for older AI responses using Bug / Fix headings.
+    if (result.childElementCount === 0) {
+        addCard("Bug", getSection(["Bug"]), "bug");
+        addCard("Cause", getSection(["Cause"]), "cause");
+        addCard("Fixed Code", getSection(["Fix"]), "fixed", true);
+        addCard("Explanation", getSection(["Explanation"]), "explanation");
+    }
+
+    // Final fallback: don't lose an unexpected AI response.
+    if (result.childElementCount === 0) {
+        const paragraph = document.createElement("p");
+        paragraph.textContent = source;
+        result.appendChild(paragraph);
+    }
 }
+
 
 async function analyzeCode(options = {}) {
     const code = (options.codeOverride ?? codeInput.value).trim();
